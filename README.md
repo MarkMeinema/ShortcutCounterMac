@@ -1,4 +1,4 @@
-# ShortcutCounter
+# ShortcutCounterMac
 
 A native macOS menubar application that tracks and logs keyboard shortcuts with detailed session information.
 
@@ -23,7 +23,7 @@ A native macOS menubar application that tracks and logs keyboard shortcuts with 
 
 ### Download & Install
 
-1. Download the latest release from [Releases](https://github.com/yourusername/ShortcutCounter/releases)
+1. Download the latest release from [Releases](https://github.com/MarkMeinema/ShortcutCounterMac/releases)
 2. Unzip and drag `ShortcutCounter.app` to your Applications folder
 3. Launch the app - it will appear in your menubar
 4. Grant Input Monitoring permission when prompted
@@ -33,8 +33,8 @@ A native macOS menubar application that tracks and logs keyboard shortcuts with 
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/ShortcutCounter.git
-   cd ShortcutCounter
+   git clone https://github.com/MarkMeinema/ShortcutCounterMac.git
+   cd ShortcutCounterMac
    ```
 
 2. Open in Xcode:
