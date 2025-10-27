@@ -19,15 +19,33 @@ A native macOS menubar application that tracks and logs keyboard shortcuts with 
 
 ### Requirements
 - macOS 13.0 or later
-- Input Monitoring permission (automatically requested)
+- Input Monitoring permission (manual setup required)
 
 ### Download & Install
 
+**Option 1: Ready-to-use App (Recommended)**
+1. Download `ShortcutCounter.app` directly from this repository
+2. Drag `ShortcutCounter.app` to your Applications folder
+3. **Important**: Right-click the app → "Open" (required for unsigned apps)
+4. Follow the permission setup below
+
+**Option 2: Download from Releases**
 1. Download the latest release from [Releases](https://github.com/MarkMeinema/ShortcutCounterMac/releases)
 2. Unzip and drag `ShortcutCounter.app` to your Applications folder
-3. Launch the app - it will appear in your menubar
-4. Grant Input Monitoring permission when prompted
-5. Restart the app after granting permissions
+3. Follow the permission setup below
+
+### ⚠️ Required Permission Setup
+
+**The app will NOT appear automatically in Input Monitoring list.** You must add it manually:
+
+1. **Launch the app** - it will appear in your menubar
+2. **Open System Preferences** → **Privacy & Security** → **Input Monitoring**
+3. **Click the "+" button** to add a new app
+4. **Navigate to Applications folder** → Select **ShortcutCounter.app**
+5. **Check the box** next to ShortcutCounter to grant permission
+6. **Restart the app** if keyboard shortcuts aren't being detected
+
+**Why manual setup?** The app is not code-signed with an Apple Developer certificate, so macOS doesn't automatically add it to the permission list. This is normal for free/open-source apps.
 
 ### Build from Source
 
@@ -95,7 +113,7 @@ A native macOS menubar application that tracks and logs keyboard shortcuts with 
 
 ## Known Issues
 
-- Requires Input Monitoring permission (macOS security requirement)
+- **Manual permission setup required** - app doesn't auto-appear in Input Monitoring list (due to lack of Apple Developer certificate)
 - May show harmless Control Center warnings in console after sleep/wake
 - Xcode rebuilds require re-granting permissions during development
 
@@ -113,10 +131,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you encounter issues:
 
-1. Check that Input Monitoring permission is granted in System Preferences
-2. Try restarting the app after granting permissions
-3. For development issues, check the Xcode console for detailed logs
-4. Open an issue on GitHub with details about your setup
+1. **Permission problems**: Follow the detailed permission setup instructions above - manual setup is required
+2. **App not detecting shortcuts**: Restart the app after granting Input Monitoring permission
+3. **"App can't be opened" error**: Right-click app → "Open" to bypass unsigned app warning
+4. **For development issues**: Check the Xcode console for detailed logs
+5. Open an issue on GitHub with details about your setup
+
+### Troubleshooting Input Monitoring
+
+If shortcuts aren't being detected:
+- Verify ShortcutCounter appears in System Preferences → Privacy & Security → Input Monitoring
+- Ensure the checkbox next to ShortcutCounter is **checked**
+- Try removing and re-adding the app using the "-" and "+" buttons
+- Restart ShortcutCounter after making permission changes
 
 ---
 
