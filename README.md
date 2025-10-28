@@ -23,11 +23,12 @@ A native macOS menubar application that tracks and logs keyboard shortcuts with 
 
 ### Download & Install
 
-**Option 1: Ready-to-use App (Recommended)**
-1. Download `ShortcutCounter.app` directly from this repository
-2. Drag `ShortcutCounter.app` to your Applications folder
-3. **Important**: Right-click the app → "Open" (required for unsigned apps)
-4. Follow the permission setup below
+**Option 1: Download ZIP (Recommended)**
+1. Download `ShortcutCounter-v1.0.0.zip` from this repository
+2. Unzip the file to extract `ShortcutCounter.app`
+3. Drag `ShortcutCounter.app` to your Applications folder
+4. **Important**: Right-click the app → "Open" (required for unsigned apps)
+5. Follow the permission setup below
 
 **Option 2: Download from Releases**
 1. Download the latest release from [Releases](https://github.com/MarkMeinema/ShortcutCounterMac/releases)
@@ -39,7 +40,7 @@ A native macOS menubar application that tracks and logs keyboard shortcuts with 
 **The app will NOT appear automatically in Input Monitoring list.** You must add it manually:
 
 1. **Launch the app** - it will appear in your menubar
-2. **Open System Preferences** → **Privacy & Security** → **Input Monitoring**
+2. **Open System Settings** → **Privacy & Security** → **Input Monitoring**
 3. **Click the "+" button** to add a new app
 4. **Navigate to Applications folder** → Select **ShortcutCounter.app**
 5. **Check the box** next to ShortcutCounter to grant permission
@@ -57,7 +58,7 @@ A native macOS menubar application that tracks and logs keyboard shortcuts with 
 
 2. Open in Xcode:
    ```bash
-   open Package.swift
+   open .swiftpm/xcode/package.xcworkspace
    ```
 
 3. Build and run (⌘+R)
@@ -140,7 +141,7 @@ If you encounter issues:
 ### Troubleshooting Input Monitoring
 
 If shortcuts aren't being detected:
-- Verify ShortcutCounter appears in System Preferences → Privacy & Security → Input Monitoring
+- Verify ShortcutCounter appears in System Settings → Privacy & Security → Input Monitoring
 - Ensure the checkbox next to ShortcutCounter is **checked**
 - Try removing and re-adding the app using the "-" and "+" buttons
 - Restart ShortcutCounter after making permission changes
