@@ -6,6 +6,7 @@ import SwiftUI
 import Cocoa
 import Carbon
 import IOKit.pwr_mgt
+import ServiceManagement
 
 @main
 struct ShortcutCounterApp: App {
@@ -41,6 +42,7 @@ struct MenuBarView: View {
     @AppStorage("secondsPerShortcut") private var secondsPerShortcut: Double = 2.0
     @State private var secondsInput: String = ""
     @State private var inputFocused: Bool = false
+    @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
 
     private let workdaySeconds: Double = 8 * 3600
 
@@ -148,6 +150,21 @@ struct MenuBarView: View {
                     commitSecondsInput()
                 }
             }
+
+            Toggle("Start bij inloggen", isOn: $launchAtLogin)
+                .toggleStyle(.switch)
+                .onChange(of: launchAtLogin) { newValue in
+                    do {
+                        if newValue {
+                            try SMAppService.mainApp.register()
+                        } else {
+                            try SMAppService.mainApp.unregister()
+                        }
+                    } catch {
+                        print("Launch at login fout: \(error)")
+                        launchAtLogin = SMAppService.mainApp.status == .enabled
+                    }
+                }
 
             Divider()
 
