@@ -6,6 +6,7 @@ import SwiftUI
 import Cocoa
 import Carbon
 import IOKit.pwr_mgt
+import ServiceManagement
 
 @main
 struct ShortcutCounterApp: App {
@@ -38,6 +39,7 @@ struct MenuBarLabel: View {
 
 struct MenuBarView: View {
     @ObservedObject var keyLogger: KeyLogger
+    @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -77,7 +79,22 @@ struct MenuBarView: View {
             }
             
             Divider()
-            
+
+            Toggle("Start bij inloggen", isOn: $launchAtLogin)
+                .toggleStyle(.switch)
+                .onChange(of: launchAtLogin) { newValue in
+                    do {
+                        if newValue {
+                            try SMAppService.mainApp.register()
+                        } else {
+                            try SMAppService.mainApp.unregister()
+                        }
+                    } catch {
+                        print("Launch at login fout: \(error)")
+                        launchAtLogin = SMAppService.mainApp.status == .enabled
+                    }
+                }
+
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }
