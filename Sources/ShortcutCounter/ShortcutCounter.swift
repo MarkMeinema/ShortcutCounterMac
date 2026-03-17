@@ -182,6 +182,29 @@ struct MenuBarView: View {
                     }
                 }
 
+            HStack(spacing: 4) {
+                Text("Logmap:")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Button("Kies map...") {
+                    let panel = NSOpenPanel()
+                    panel.canChooseDirectories = true
+                    panel.canChooseFiles = false
+                    panel.allowsMultipleSelection = false
+                    panel.prompt = "Kies map"
+                    panel.directoryURL = keyLogger.logFileURL.deletingLastPathComponent()
+                    if panel.runModal() == .OK, let url = panel.url {
+                        keyLogger.updateLogDirectory(url)
+                    }
+                }
+                .font(.caption)
+            }
+            Text(keyLogger.logFileURL.deletingLastPathComponent().path)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+                .truncationMode(.middle)
+
             Divider()
 
             Button("Quit") {
@@ -260,15 +283,35 @@ struct LogEntry {
 
 @MainActor
 class KeyLogger: ObservableObject {
-    let logFileURL: URL = {
+    @Published var logFileURL: URL
+
+    static func defaultLogDirectory() -> URL {
+        let home = FileManager.default.homeDirectoryForCurrentUser
+        return home.appendingPathComponent("Applications/ShortcutCounter", isDirectory: true)
+    }
+
+    private static func resolveLogFileURL() -> URL {
         let fm = FileManager.default
-        let home = fm.homeDirectoryForCurrentUser
-        let dir = home.appendingPathComponent("Applications/ShortcutCounter", isDirectory: true)
+        let dir: URL
+        if let savedPath = UserDefaults.standard.string(forKey: "logDirectory"), !savedPath.isEmpty {
+            dir = URL(fileURLWithPath: savedPath, isDirectory: true)
+        } else {
+            dir = defaultLogDirectory()
+        }
         if !fm.fileExists(atPath: dir.path) {
             try? fm.createDirectory(at: dir, withIntermediateDirectories: true)
         }
         return dir.appendingPathComponent("shortcut_log.txt")
-    }()
+    }
+
+    func updateLogDirectory(_ url: URL) {
+        let fm = FileManager.default
+        if !fm.fileExists(atPath: url.path) {
+            try? fm.createDirectory(at: url, withIntermediateDirectories: true)
+        }
+        UserDefaults.standard.set(url.path, forKey: "logDirectory")
+        logFileURL = url.appendingPathComponent("shortcut_log.txt")
+    }
     @MainActor @Published var isRunning = false
     @MainActor @Published var shortcutsDetected = 0
     @MainActor @Published var shortcutCounts: [String: Int] = [:]
@@ -279,6 +322,10 @@ class KeyLogger: ObservableObject {
     private var optionPressed = false
     private var ctrlPressed = false
     private var shiftPressed = false
+
+    init() {
+        self.logFileURL = KeyLogger.resolveLogFileURL()
+    }
 
     func toggle() {
         if isRunning {
