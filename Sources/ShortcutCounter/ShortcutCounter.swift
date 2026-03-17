@@ -46,48 +46,63 @@ struct MenuBarView: View {
 
     private let workdaySeconds: Double = 8 * 3600
 
+    private static let numberFormatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.groupingSeparator = "."
+        f.decimalSeparator = ","
+        return f
+    }()
+
+    private func formatted(_ n: Int) -> String {
+        Self.numberFormatter.string(from: NSNumber(value: n)) ?? "\(n)"
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Shortcut Counter")
-                .font(.headline)
+                .font(.title2)
+                .bold()
 
             Divider()
 
             Text("Status: \(keyLogger.isRunning ? "Running" : "Stopped")")
+                .font(.body)
                 .foregroundColor(keyLogger.isRunning ? .green : .red)
 
-            Text("Total shortcuts: \(keyLogger.shortcutsDetected)")
-                .font(.subheadline)
+            Text("Total shortcuts: \(formatted(keyLogger.shortcutsDetected))")
+                .font(.body)
+                .bold()
 
             if !keyLogger.shortcutCounts.isEmpty {
                 Divider()
 
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("Breakdown:")
-                            .font(.caption)
+                            .font(.callout)
                             .foregroundColor(.secondary)
 
                         ForEach(keyLogger.shortcutCounts.sorted(by: { $0.value > $1.value }), id: \.key) { shortcut, count in
                             HStack {
                                 Text(shortcut)
-                                    .font(.system(.caption, design: .monospaced))
+                                    .font(.system(.callout, design: .monospaced))
                                 Spacer()
-                                Text("\(count)")
-                                    .font(.caption)
+                                Text(formatted(count))
+                                    .font(.callout)
                                     .foregroundColor(.secondary)
                             }
                         }
                     }
                 }
-                .frame(maxHeight: 120)
+                .frame(minHeight: 250, maxHeight: 350)
             }
 
             Divider()
 
             // Rapport sectie
             Text("Tijdsbesparing")
-                .font(.caption)
+                .font(.callout)
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
 
@@ -116,21 +131,21 @@ struct MenuBarView: View {
 
             let projection = keyLogger.yearProjectionShortcuts()
             let projectedSaved = projection * secondsPerShortcut
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text("Jaarprojectie (gem. 3 mnd)")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundColor(.secondary)
                 Text("→ \(formatTimeSaved(projectedSaved)) \(formatWorkdays(projectedSaved))")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundColor(.primary)
             }
 
             Divider()
 
             // Instelling: seconden per sneltoets
-            HStack(spacing: 4) {
+            HStack(spacing: 8) {
                 Text("Sec/sneltoets:")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundColor(.secondary)
                 TextField("2.00", text: Binding(
                     get: {
@@ -138,8 +153,8 @@ struct MenuBarView: View {
                     },
                     set: { secondsInput = $0 }
                 ))
-                .font(.system(.caption, design: .monospaced))
-                .frame(width: 50)
+                .font(.system(.callout, design: .monospaced))
+                .frame(width: 60)
                 .textFieldStyle(.roundedBorder)
                 .multilineTextAlignment(.trailing)
                 .onTapGesture {
@@ -152,6 +167,7 @@ struct MenuBarView: View {
             }
 
             Toggle("Start bij inloggen", isOn: $launchAtLogin)
+                .font(.callout)
                 .toggleStyle(.switch)
                 .onChange(of: launchAtLogin) { newValue in
                     do {
@@ -172,23 +188,23 @@ struct MenuBarView: View {
                 NSApplication.shared.terminate(nil)
             }
         }
-        .padding()
-        .frame(width: 280)
+        .padding(16)
+        .frame(width: 380)
     }
 
     @ViewBuilder
     private func reportRow(label: String, count: Int, activeTime: TimeInterval) -> some View {
         let savedSeconds = Double(count) * secondsPerShortcut
-        VStack(alignment: .leading, spacing: 1) {
+        VStack(alignment: .leading, spacing: 3) {
             Text(label)
-                .font(.caption)
+                .font(.callout)
                 .foregroundColor(.secondary)
-            HStack(spacing: 4) {
-                Text("\(count) sneltoetsen")
-                    .font(.caption)
+            HStack(spacing: 6) {
+                Text("\(formatted(count)) sneltoetsen")
+                    .font(.callout)
                     .foregroundColor(.secondary)
                 Text("→ \(formatTimeSaved(savedSeconds)) \(formatWorkdays(savedSeconds))")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundColor(.primary)
             }
         }
