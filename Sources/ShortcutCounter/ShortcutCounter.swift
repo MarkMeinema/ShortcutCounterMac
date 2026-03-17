@@ -41,7 +41,7 @@ struct MenuBarView: View {
     @ObservedObject var keyLogger: KeyLogger
     @AppStorage("secondsPerShortcut") private var secondsPerShortcut: Double = 2.0
     @State private var secondsInput: String = ""
-    @State private var inputFocused: Bool = false
+    @FocusState private var inputFocused: Bool
     @State private var launchAtLogin: Bool = SMAppService.mainApp.status == .enabled
 
     private let workdaySeconds: Double = 8 * 3600
@@ -157,12 +157,17 @@ struct MenuBarView: View {
                 .frame(width: 60)
                 .textFieldStyle(.roundedBorder)
                 .multilineTextAlignment(.trailing)
-                .onTapGesture {
-                    inputFocused = true
-                    secondsInput = String(format: "%.2f", secondsPerShortcut)
-                }
+                .focused($inputFocused)
                 .onSubmit {
                     commitSecondsInput()
+                    inputFocused = false
+                }
+                .onChange(of: inputFocused) { focused in
+                    if focused {
+                        secondsInput = String(format: "%.2f", secondsPerShortcut)
+                    } else {
+                        commitSecondsInput()
+                    }
                 }
             }
 
@@ -242,7 +247,6 @@ struct MenuBarView: View {
         if let value = Double(cleaned) {
             secondsPerShortcut = min(max(value, 0.01), 60.0)
         }
-        inputFocused = false
     }
 
     private func formatTimeSaved(_ seconds: Double) -> String {
